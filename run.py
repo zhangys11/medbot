@@ -43,6 +43,10 @@ def index():
     # return current_app.send_static_file("templates/index.html")
     return send_file("templates/index.html")
 
+@app.route("/constitution", methods=['GET', 'POST'])
+def constitution():
+    return send_file("templates/constitution.html")
+
 if __name__ == '__main__':
     app.run(host='localhost',port=5000,debug=True)
 
