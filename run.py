@@ -1,9 +1,8 @@
 # coding=gbk
 from chat_robot import ChatRobot
 from keyword_template import KeyWordTemplate
-from flask import Flask
+from flask import Flask, render_template, request, current_app, send_file
 from flask_cors import CORS
-from flask import request
 import json
 
 
@@ -38,6 +37,11 @@ def robot(question):
     print(answer)
     print('\n')
     return ans_json
+
+@app.route("/", methods=['GET', 'POST'])
+def index():
+    # return current_app.send_static_file("templates/index.html")
+    return send_file("templates/index.html")
 
 if __name__ == '__main__':
     app.run(host='localhost',port=5000,debug=True)

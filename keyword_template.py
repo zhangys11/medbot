@@ -14,8 +14,8 @@ class KeyWordTemplate:
         self.answers_path = os.path.join(cur_dir,'dict/template_answers.txt')
 
         # 例:self.keywords = ['生病了','不想活','做噩梦']
-        self.keywords = [i.strip() for i in open(self.keywords_path,encoding="gbk") if i.strip()]
-        self.answers  = [i.strip() for i in open(self.answers_path,encoding="gbk") if i.strip()]
+        self.keywords = [i.strip() for i in open(self.keywords_path,encoding="utf-8") if i.strip()]
+        self.answers  = [i.strip() for i in open(self.answers_path,encoding="utf-8") if i.strip()]
 
 
         # 构造关键词字典
