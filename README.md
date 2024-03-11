@@ -23,7 +23,7 @@ This project is based on github.com/Groot-lin/MedicalChatbots.
 
 3. neo4j.bat console
 
-4. python main.py
+4. python run.py
 
 5. 修改static目录下的index.html的第67行和95行,ip和端口改成与main.py中的一致
 
