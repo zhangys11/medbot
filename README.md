@@ -27,4 +27,4 @@ This project is based on github.com/Groot-lin/MedicalChatbots.
 
 5. 修改static目录下的index.html的第67行和95行,ip和端口改成与main.py中的一致
 
-6. 在浏览器中打开static下的index.html
+6. 在浏览器中打开 localhost:5000
