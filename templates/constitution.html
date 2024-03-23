@@ -7160,6 +7160,7 @@
         </div>
 
         <script>
+
             document.addEventListener('DOMContentLoaded', function () {
                 // 定义全局变量，用于存储问卷数据
                 var questionnaireData = {};
@@ -7178,8 +7179,7 @@
                         this.classList.add('rate-on');
 
                         // 更新隐藏字段的值
-                        console.log(this);
-                        var hiddenFieldId = this.getAttribute('id').replace('drv', 'q');
+                        var hiddenFieldId = this.parentNode.parentNode.getAttribute('id').replace('drv', 'q');
                         var hiddenInput = document.getElementById(hiddenFieldId);
                         if (hiddenInput) {
                             hiddenInput.value = this.getAttribute('dval');
@@ -7252,4 +7252,5 @@
                     submitSuccess.style.display = 'none';
                 }
             });
+
         </script>
