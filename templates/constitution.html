@@ -7156,26 +7156,27 @@
                         <h2>提交成功！</h2>
                         <p>感谢您的参与，您的问卷结果已提交。</p>
                     </div>
+                    <div id="resultContent"></div>
             </fieldset>
         </div>
-
+        <div id="scoreModal" style="display:none;">
+            <div id="modalContent">
+                <span id="closeModal" style="float:right; cursor:pointer;">&times;</span>
+                <p>您的分数是：<span id="scoreDisplay"></span></p>
+            </div>
+        </div>
         <script>
 
+            var questionnaireData = {};
             document.addEventListener('DOMContentLoaded', function () {
-                // 定义全局变量，用于存储问卷数据
                 var questionnaireData = {};
 
-                // 为每个选项添加点击事件监听器
-                var options = document.querySelectorAll('.rate-off.rate-offlarge');
+                // 为每个评分选项添加点击事件
+                var options = document.querySelectorAll('.rate-off');
                 options.forEach(function (option) {
-                    option.addEventListener('click', function (event) {
-                        // 清除当前问题中所有选项的激活状态
-                        var allOptions = this.parentNode.querySelectorAll('.rate-off.rate-offlarge');
-                        allOptions.forEach(function (otherOption) {
-                            otherOption.classList.remove('rate-on');
-                        });
-
-                        // 将当前选项设置为激活状态
+                    option.addEventListener('click', function () {
+                        var siblings = this.parentNode.parentNode.querySelectorAll('.rate-off');
+                        siblings.forEach(sibling => sibling.classList.remove('rate-on'));
                         this.classList.add('rate-on');
 
                         // 更新隐藏字段的值
@@ -7185,18 +7186,26 @@
                             hiddenInput.value = this.getAttribute('dval');
                         }
 
-                        // 收集问卷数据
-                        var topic = this.closest('.field.ui-field-contain').getAttribute('topic');
-                        questionnaireData[topic] = hiddenInput.value;
-                        // 在选项点击事件的最后添加以下代码
-                        console.log('Current questionnaire data:', questionnaireData);
+
+                        var questionId = this.closest('.field').getAttribute('id');
+                        var type = questionId.match(/div(\d+)/)[1]; // 从问题ID中提取体质类型编号
+                        var score = parseInt(this.getAttribute('dval'), 10);
+
+                        // 逆向计分处理
+                        if (this.closest('.field').innerHTML.includes('＊')) {
+                            score = 6 - score;
+                        }
+
+                        // 更新
+                        questionnaireData[type] = score; // 直接记录每个体质类型的得分
                     });
                 });
 
-                // 提交按钮的事件监听器
+                // 提交按钮事件监听器
                 var submitBtn = document.getElementById('submitBtn');
                 submitBtn.addEventListener('click', function (event) {
-                    event.preventDefault();
+                    event.preventDefault(); // 阻止表单默认提交行为
+
 
                     // 收集所有隐藏字段的值
                     var hiddenInputs = document.querySelectorAll('input[type="text"][style="display:none;"]');
@@ -7227,29 +7236,64 @@
                         }
                     };
                     xhr.send(JSON.stringify(questionnaireData));
+
+                    var transformedScores = calculateTransformedScores(questionnaireData);
+                    var constitutionResult = determineConstitution(transformedScores);
+                    displayResultsModal(constitutionResult); // 显示结果
                 });
 
-                // 显示问卷结果
-                function displayResults(results) {
-                    console.log('Received results from backend:', results);
-                    var resultPage = document.getElementById('resultPage');
-                    resultPage.style.display = 'block';
+                // 计算转换分数
+                function calculateTransformedScores(data) {
+                    var transformedScores = {};
+                    for (var type in data) {
+                        // 因为每种体质只选择了一次，所以不需要使用reduce函数
+                        var score = data[type];
+                        // 使用公式转换分数
+                        transformedScores[type] = ((score - 1) / (5 - 1)) * 100;
+                    }
+                    return transformedScores;
+                }
 
-                    // 清空之前的结果
-                    resultPage.querySelectorAll('p').forEach(function (p) {
-                        p.textContent = '';
-                    });
+                // 判定体质
+                function determineConstitution(scores) {
+                    var primaryConstitution = null;
+                    var secondaryConstitutions = [];
 
-                    // 填充新的结果
-                    Object.keys(results).forEach(function (key) {
-                        var p = document.createElement('p');
-                        p.textContent = key + ': ' + results[key] + '分';
-                        resultPage.appendChild(p);
-                    });
+                    // 根据平和质的得分，判断是否为平和质
+                    if (scores['1'] >= 60) {
+                        let isPinghe = true;
+                        for (let i = 2; i <= 9; i++) {
+                            if (scores[i] >= 40) {
+                                isPinghe = false;
+                                break;
+                            }
+                        }
+                        if (isPinghe) {
+                            primaryConstitution = '平和质';
+                        }
+                    }
 
-                    // 隐藏等待页面
-                    var submitSuccess = document.getElementById('submitSuccess');
-                    submitSuccess.style.display = 'none';
+                    // 判断其他体质
+                    for (let i = 2; i <= 9; i++) {
+                        if (scores[i] >= 40) {
+                            primaryConstitution = primaryConstitution || `偏颇质(${i})`;
+                        } else if (scores[i] >= 30 && scores[i] < 40) {
+                            secondaryConstitutions.push(`倾向(${i})`);
+                        }
+                    }
+
+                    return {
+                        primary: primaryConstitution,
+                        secondary: secondaryConstitutions.join(', ')
+                    };
+                }
+
+                // 显示结果
+                function displayResultsModal(result) {
+                    var resultContent = document.getElementById('resultContent');
+                    resultContent.innerHTML = `您的主要体质是：${result.primary || '未判定'}, 倾向体质有：${result.secondary}`;
+                    var scoreModal = document.getElementById('scoreModal');
+                    scoreModal.style.display = 'block';
                 }
             });
 

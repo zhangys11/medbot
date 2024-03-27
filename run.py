@@ -64,22 +64,14 @@ def submit_survey():
     results = {}
 
     # 处理数据
-    for constitution, scores in data.items():
-        if constitution not in constitution_questions:
-            return jsonify({"error": "Invalid constitution type."}), 400  # 无效的体质类型
-        questions_count = constitution_questions[constitution]
-        original_score = sum(scores)  # 计算原始分
-        # 计算转化分
-        transformed_score = ((original_score - questions_count) / (questions_count * 4)) * 100
-        results[constitution] = transformed_score
+    for question, score in data.items(): # skip the first n items
+        print(question)
+        print(score)  
 
-    # 检查结果字典是否为空
-    if not results:
-        return jsonify({"error": "No results to determine constitution."}), 400
 
-    # 根据转化分判定体质类型
-    final_result, status_code = determine_constitution(results)
-    return jsonify({"result": final_result}), status_code
+    # todo: save to db
+      
+    return jsonify({"result": 0}), 200
 
 def determine_constitution(results):
     # 如果results字典为空，返回默认结果
