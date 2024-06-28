@@ -1,3 +1,8 @@
+# TODO
+
+用户登录管理  
+中医体质评测表 正确性检验/保存/加载
+
 # About medbot
 
 A medical KG chatbot based on neo4j  
@@ -9,7 +14,6 @@ This project is based on github.com/Groot-lin/MedicalChatbots.
 * question_analysis.py : 问题语义分析
 * get_cql.py : 根据问题获取对应cql语句
 * get_answer.py : 查询数据库并结合生成答案
-
 
 # Install
 

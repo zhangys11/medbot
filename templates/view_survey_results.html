@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Survey Results</title>
+</head>
+<body>
+    <h1>Survey Results</h1>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>User ID</th>
+            <th>JSON Data</th>
+            <th>Created At</th>
+        </tr>
+        {% for result in survey_results %}
+        <tr>
+            <td>{{ result.id }}</td>
+            <td>{{ result.user_id }}</td>
+            <td>{{ result.json_data|tojson }}</td> <!-- 格式化 JSON 数据 -->
+            <td>{{ result.created_at }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
