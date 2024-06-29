@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="/static/img/logo.jpg">
+    <link rel="stylesheet" href="/static/css/index.css"/>
+</head>
+<body style="height: 100%;">
+<div id="app">
+    <div class="center">
+        <div class="top" id="message">
+            <!-- <div class="empty" v-if="flag"><img src="./img/empty.jpg"></div> -->
+            <div class="left">
+                <div class="web">
+                    <img src="/static/img/logo.jpg">
+                    <span>{{ (new Date()).toLocaleString()}}</span>
+                    <p>你好，有什么问题可以咨询小康</p>
+                </div>
+            </div>
+            <div class="question" v-for="p in users">
+                <div class="right">
+                    <div class="user">
+                        <img :src="p.user_src">
+                        <span>{{p.user_date}}</span>
+                        <p>{{p.key}}</p>
+                    </div>
+                </div>
+                <div class="left">
+                    <div class="web">
+                        <img :src="p.web_src">
+                        <span>{{p.web_date}}</span>
+                        <p>{{p.answer}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="bottom">
+            <img class="simple" src="/static/img/shanchu.png" @click="deletes">
+            <img class="simple" src="/static/img/xiazai.png">
+            <img class="simple" src="/static/img/xiaoxi.png">
+            <input type="text" placeholder="来说点什么吧..." v-model="key" @keyup="keyenter">
+            <img src="/static/img/fasong-tijiao.png" class="fasong" @click="send">
+        </div>
+    </div>
+
+    
+   </div>
+
+   <script src="/static/js/vue.js"></script>
+   <script src="/static/js/axios.min.js"></script>
+   
+   <script>
+       let app = new Vue({
+           el: "#app",
+           data() {
+               return {
+                   users:[],
+                   key:"",
+                   flag:true
+               }
+           },
+           methods: {
+               send(){
+                let now = new Date()
+                let time=now.toLocaleString()
+                let params={
+                    question:this.key
+                }
+                axios.post("/question", params).then((res)=>{
+                    let end = new Date()
+                    let user={
+                       user_src: "/static/img/user.jpg",
+                       key: this.key,
+                       user_date: time,
+                       web_src: "/static/img/logo.jpg",
+                       answer: res.data.answer,
+                       web_date: end.toLocaleString(),
+                    }
+                    this.users.push(user)
+                    this.key=""
+                    let message = document.getElementById('message');
+                    message.scrollTop = message.scrollHeight;
+                })
+            },
+               deletes(){
+                if(confirm("是否清空对话")){
+                    this.users=[]
+                }
+            },
+               keyenter(e){
+                if(e.keyCode==13 && this.key!=""){
+                    let now = new Date()
+                    let time=now.toLocaleString()
+                    let params={
+                        question:this.key
+                    }
+                    axios.post("/question", params).then((res)=>{ // or use full address http://ip/question
+                        let end = new Date()
+                        let user={
+                           user_src: "/static/img/user.jpg",
+                           key: this.key,
+                           user_date: time,
+                           web_src: "/static/img/logo.jpg",
+                           answer: res.data.answer,
+                           web_date: end.toLocaleString(),
+                        }
+                        this.users.push(user)
+                        this.key=""
+                        let message = document.getElementById('message');
+                        message.scrollTop = message.scrollHeight;
+                    })
+                }
+            }
+           },
+       })
+   </script>
+</body>

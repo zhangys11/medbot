@@ -97,7 +97,7 @@ def login_post():
 
     # if the above check passes, then we know the user has the right credentials
     login_user(user, remember=remember) # save session
-    return redirect(url_for('profile'))
+    return redirect(url_for('index'))
 
 @auth.route('/logout')
 @login_required
@@ -114,11 +114,21 @@ main = Blueprint('main', __name__)
 app.register_blueprint(main)
 '''
 
-@app.route('/profile')
+@app.route("/")
 @login_required
-def profile():
-    return render_template('profile.html', name=current_user.name)
+def index():
+    # return current_app.send_static_file("templates/index.html")
+    return render_template('index.html', name=current_user.name) #  send_file("templates/index.html")
 
+@app.route("/chat")
+@login_required
+def chat():
+    return send_file("templates/chat.html")
+
+@app.route("/scale", methods=['GET', 'POST'])
+@login_required
+def scale():
+    return render_template("scale.html")
 
 CORS(app)# Cross-Origin Resource Sharing
 ans = 'I dont understand. \nPlease contact a doctor.'
@@ -128,6 +138,7 @@ handler = ChatRobot()
 
 
 @app.route('/question', methods=['POST'])
+@login_required
 def controller():
     data = request.get_data()
     json_data = json.loads(data.decode("utf-8"))
@@ -166,6 +177,7 @@ constitution_questions = {
 }
 
 @app.route("/survey", methods=['POST'])
+@login_required
 def submit_survey():
     # 假设 data 是从前端接收到的包含问卷数据的字典
     data = request.json
@@ -190,18 +202,6 @@ def view_survey_results():
     survey_results = SurveyResult.query.all()
     # 将查询结果传递给模板
     return render_template('view_survey_results.html', survey_results=survey_results)
-
-
-@app.route("/", methods=['GET', 'POST'])
-def index():
-    # return current_app.send_static_file("templates/index.html")
-    return render_template('index.html') #  send_file("templates/index.html")
-
-
-@app.route("/constitution", methods=['GET', 'POST'])
-@login_required
-def constitution():
-    return send_file("templates/constitution.html")
 
 if __name__ == '__main__':
 

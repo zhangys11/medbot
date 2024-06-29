@@ -1,115 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h1 class="title">
+    Welcome, {{ name }}!
+</h1>
 
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
 
-   <div id="app">
-    <div class="center">
-        <div class="top" id="message">
-            <!-- <div class="empty" v-if="flag"><img src="./img/empty.jpg"></div> -->
-            <div class="left">
-                <div class="web">
-                    <img src="/static/img/logo.jpg">
-                    <span>{{ (new Date()).toLocaleString()}}</span>
-                    <p>你好，有什么问题可以咨询小康</p>
-                </div>
-            </div>
-            <div class="question" v-for="p in users">
-                <div class="right">
-                    <div class="user">
-                        <img :src="p.user_src">
-                        <span>{{p.user_date}}</span>
-                        <p>{{p.key}}</p>
-                    </div>
-                </div>
-                <div class="left">
-                    <div class="web">
-                        <img :src="p.web_src">
-                        <span>{{p.web_date}}</span>
-                        <p>{{p.answer}}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="bottom">
-            <img class="simple" src="/static/img/shanchu.png" @click="deletes">
-            <img class="simple" src="/static/img/xiazai.png">
-            <img class="simple" src="/static/img/xiaoxi.png">
-            <input type="text" placeholder="来说点什么吧..." v-model="key" @keyup="keyenter">
-            <img src="/static/img/fasong-tijiao.png" class="fasong" @click="send">
-        </div>
-    </div>
+<a href="{{ url_for('chat') }}" class="button is-info is-large">
+    Start a chat
+</a>
+<a href="{{ url_for('scale') }}" class="button is-info is-large">
+    Take a survey
+</a>
 
-    
-   </div>
-
-   <script src="/static/js/vue.js"></script>
-   <script src="/static/js/axios.min.js"></script>
-   
-   <script>
-       let app = new Vue({
-           el: "#app",
-           data() {
-               return {
-                   users:[],
-                   key:"",
-                   flag:true
-               }
-           },
-           methods: {
-               send(){
-                let now = new Date()
-                let time=now.toLocaleString()
-                let params={
-                    question:this.key
-                }
-                axios.post("/question", params).then((res)=>{
-                    let end = new Date()
-                    let user={
-                       user_src: "/static/img/user.jpg",
-                       key: this.key,
-                       user_date: time,
-                       web_src: "/static/img/logo.jpg",
-                       answer: res.data.answer,
-                       web_date: end.toLocaleString(),
-                    }
-                    this.users.push(user)
-                    this.key=""
-                    let message = document.getElementById('message');
-                    message.scrollTop = message.scrollHeight;
-                })
-            },
-               deletes(){
-                if(confirm("是否清空对话")){
-                    this.users=[]
-                }
-            },
-               keyenter(e){
-                if(e.keyCode==13 && this.key!=""){
-                    let now = new Date()
-                    let time=now.toLocaleString()
-                    let params={
-                        question:this.key
-                    }
-                    axios.post("/question", params).then((res)=>{ // or use full address http://ip/question
-                        let end = new Date()
-                        let user={
-                           user_src: "/static/img/user.jpg",
-                           key: this.key,
-                           user_date: time,
-                           web_src: "/static/img/logo.jpg",
-                           answer: res.data.answer,
-                           web_date: end.toLocaleString(),
-                        }
-                        this.users.push(user)
-                        this.key=""
-                        let message = document.getElementById('message');
-                        message.scrollTop = message.scrollHeight;
-                    })
-                }
-            }
-           },
-       })
-   </script>
+<h1>TODO: 
+    Chat dialog  
+    列表：您的体测结果</h1>
 
 {% endblock %}
+<!--<iframe src="/chat"></iframe>-->
