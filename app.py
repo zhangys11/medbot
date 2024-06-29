@@ -3,20 +3,60 @@ import uuid
 import json
 from datetime import datetime
 from keyword_template import KeyWordTemplate
-from flask import Flask, render_template, request, current_app, send_file,redirect, url_for,jsonify, session, Blueprint, flash
+from flask import g, Flask, render_template, request, current_app, send_file,redirect, url_for,jsonify, session, Blueprint, flash, abort
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, login_required, current_user, logout_user
+from flask_babel import Babel, gettext, ngettext
 from chat_robot import ChatRobot
 
+
 login_manager = LoginManager()
-app = Flask(__name__)
+app = Flask(__name__) #, url_prefix='/<lang_code>')
 
 # In order to use session in flask you need to set the secret key in your application settings. secret key is a random key used to encrypt your cookies and save send them to the browser.
 app.config['SECRET_KEY'] = uuid.uuid4().hex
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.getcwd() + '/med.db'  # 数据库URI，根据实际情况修改
 db = SQLAlchemy(app)
+
+app.config['APPLICATION_ROOT'] = '/lang_code'
+
+def get_locale():
+    if not g.get('lang_code', None):
+        g.lang_code = request.accept_languages.best_match(['en', 'zh', 'ja'])
+    return g.lang_code
+
+babel = Babel(app)
+babel.init_app(app, locale_selector=get_locale)
+
+@app.url_defaults
+def add_language_code(endpoint, values):
+    values.setdefault('lang_code', g.lang_code)
+
+@app.url_value_preprocessor
+def pull_lang_code(endpoint, values):
+    pass
+    # g.lang_code = values.pop('lang_code')
+
+@app.before_request
+def before_request():
+    if g.lang_code not in ['en', 'zh', 'ja']:
+        adapter = app.url_map.bind('')
+        try:
+            endpoint, args = adapter.match('/en' + request.full_path.rstrip('/ ?'))
+            return redirect(url_for(endpoint, **args), 301)
+        except:
+            abort(404)
+
+    dfl = request.url_rule.defaults
+    if 'lang_code' in dfl:
+        if dfl['lang_code'] != request.full_path.split('/')[1]:
+            abort(404)
+
+
+login_manager.login_view = 'auth.login'
+login_manager.init_app(app)
 
 
 class User(UserMixin, db.Model): # a mixin is a special kind of multiple inheritance that provides limited functionality and polymorphic resonance for a child class.
@@ -39,9 +79,6 @@ class SurveyResult(db.Model):
     def user(self):
         return User.query.get(self.user_id)
     
-login_manager.login_view = 'auth.login'
-login_manager.init_app(app)
-
 @login_manager.user_loader
 def load_user(user_id):
     # since the user_id is just the primary key of our user table, use it in the query for the user
@@ -92,7 +129,7 @@ def login_post():
     # check if the user actually exists
     # take the user-supplied password, hash it, and compare it to the hashed password in the database
     if not user or not check_password_hash(user.password, password):
-        flash('Please check your login details and try again.')
+        flash(gettext('Please check your login details and try again.'))
         return redirect(url_for('auth.login')) # if the user doesn't exist or password is wrong, reload the page
 
     # if the above check passes, then we know the user has the right credentials
@@ -107,17 +144,10 @@ def logout():
 
 app.register_blueprint(auth)
 
-'''
-# blueprint for non-auth parts of app
-main = Blueprint('main', __name__)
-
-app.register_blueprint(main)
-'''
-
-@app.route("/")
+@app.route("/", defaults={'lang_code': 'zh'})
 @login_required
 def index():
-    # return current_app.send_static_file("templates/index.html")
+    # g.lang_code = request.accept_languages.best_match(['en', 'zh', 'ja'])
     return render_template('index.html', name=current_user.name) #  send_file("templates/index.html")
 
 @app.route("/chat")

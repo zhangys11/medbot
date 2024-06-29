@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1 class="title">
-    Welcome, {{ name }}!
+    {{_(Welcome)}}, {{ name }}!
 </h1>
 
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" />
@@ -10,10 +10,10 @@
 <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
 
 <a href="{{ url_for('chat') }}" class="button is-info is-large">
-    Start a chat
+    {{_(Start a chat)}}
 </a>
 <a href="{{ url_for('scale') }}" class="button is-info is-large">
-    Take a survey
+    {{_(Take a survey)}}
 </a>
 
 <h1>TODO: 

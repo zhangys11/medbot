@@ -1,0 +1,68 @@
+# Chinese translations for PROJECT.
+# Copyright (C) 2024 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2024-06-29 21:18+0800\n"
+"PO-Revision-Date: 2024-06-29 21:19+0800\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: zh\n"
+"Language-Team: zh <LL@li.org>\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.14.0\n"
+
+#: templates/base.html:23
+msgid "Home"
+msgstr "首页"
+
+#: templates/base.html:26
+msgid "Chat"
+msgstr "问诊"
+
+#: templates/base.html:29
+msgid "Scale"
+msgstr "量表"
+
+#: templates/base.html:34 templates/login.html:5 templates/login.html:31
+msgid "Login"
+msgstr "登录"
+
+#: templates/base.html:37 templates/signup.html:5 templates/signup.html:33
+msgid "Sign Up"
+msgstr "注册"
+
+#: templates/base.html:42
+msgid "Logout"
+msgstr "注销"
+
+#: templates/login.html:17
+msgid "Your Email"
+msgstr "邮箱"
+
+#: templates/login.html:23
+msgid "Your Password"
+msgstr "密码"
+
+#: templates/login.html:28
+msgid "Remember me"
+msgstr "记住我"
+
+#: templates/signup.html:17
+msgid "Email"
+msgstr "邮箱"
+
+#: templates/signup.html:23
+msgid "Name"
+msgstr "用户名"
+
+#: templates/signup.html:29
+msgid "Password"
+msgstr "密码"
+
