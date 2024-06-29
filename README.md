@@ -1,5 +1,7 @@
 # TODO
 
+i18n ui
+
 /constitution 中医体质评测表 正确性检验
 参照：https://www.wjx.cn/m/3526126.aspx
 
