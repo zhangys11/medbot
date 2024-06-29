@@ -20,40 +20,6 @@ app.config['SECRET_KEY'] = uuid.uuid4().hex
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.getcwd() + '/med.db'  # 数据库URI，根据实际情况修改
 db = SQLAlchemy(app)
 
-'''
-
-app.config['APPLICATION_ROOT'] = '/lang_code'
-
-def get_locale():
-    if not g.get('lang_code', None):
-        g.lang_code = request.accept_languages.best_match(['en', 'zh', 'ja'])
-    return g.lang_code
-
-@app.url_defaults
-def add_language_code(endpoint, values):
-    values.setdefault('lang_code', g.lang_code)
-
-@app.url_value_preprocessor
-def pull_lang_code(endpoint, values):
-    pass
-    # g.lang_code = values.pop('lang_code')
-
-@app.before_request
-def before_request():
-    if g.lang_code not in ['en', 'zh', 'ja']:
-        adapter = app.url_map.bind('')
-        try:
-            endpoint, args = adapter.match('/en' + request.full_path.rstrip('/ ?'))
-            return redirect(url_for(endpoint, **args), 301)
-        except:
-            abort(404)
-
-    dfl = request.url_rule.defaults
-    if 'lang_code' in dfl:
-        if dfl['lang_code'] != request.full_path.split('/')[1]:
-            abort(404)
-'''
-
 app.config['LANGUAGES'] = {
     'en': 'English',
     'zh': 'Chinese',
