@@ -3,7 +3,7 @@ import uuid
 import json
 from datetime import datetime
 from keyword_template import KeyWordTemplate
-from flask import g, Flask, render_template, request, current_app, send_file,redirect, url_for,jsonify, session, Blueprint, flash, abort
+from flask import g, Flask, render_template, request, current_app, send_file,redirect, url_for,jsonify, session, Blueprint, flash, abort, make_response
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -20,15 +20,14 @@ app.config['SECRET_KEY'] = uuid.uuid4().hex
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.getcwd() + '/med.db'  # 数据库URI，根据实际情况修改
 db = SQLAlchemy(app)
 
+'''
+
 app.config['APPLICATION_ROOT'] = '/lang_code'
 
 def get_locale():
     if not g.get('lang_code', None):
         g.lang_code = request.accept_languages.best_match(['en', 'zh', 'ja'])
     return g.lang_code
-
-babel = Babel(app)
-babel.init_app(app, locale_selector=get_locale)
 
 @app.url_defaults
 def add_language_code(endpoint, values):
@@ -53,6 +52,27 @@ def before_request():
     if 'lang_code' in dfl:
         if dfl['lang_code'] != request.full_path.split('/')[1]:
             abort(404)
+'''
+
+app.config['LANGUAGES'] = {
+    'en': 'English',
+    'zh': 'Chinese',
+    'ja': 'Japanese'
+}
+
+babel = Babel(app)
+
+@app.route('/language/<language>')
+def set_language(language=None):
+    response = make_response(redirect(request.referrer or '/'))
+    response.set_cookie('lang', language)
+    return response
+    
+# @babel.localeselector
+def get_locale():
+    return request.cookies.get('lang', 'en')
+
+babel.init_app(app, locale_selector=get_locale)
 
 
 login_manager.login_view = 'auth.login'
@@ -144,7 +164,7 @@ def logout():
 
 app.register_blueprint(auth)
 
-@app.route("/", defaults={'lang_code': 'zh'})
+@app.route("/")
 @login_required
 def index():
     # g.lang_code = request.accept_languages.best_match(['en', 'zh', 'ja'])

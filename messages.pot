@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-06-29 21:18+0800\n"
+"POT-Creation-Date: 2024-06-29 22:35+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,6 +39,18 @@ msgstr ""
 
 #: templates/base.html:42
 msgid "Logout"
+msgstr ""
+
+#: templates/index.html:5
+msgid "Welcome"
+msgstr ""
+
+#: templates/index.html:13
+msgid "Start a chat"
+msgstr ""
+
+#: templates/index.html:16
+msgid "Take a survey"
 msgstr ""
 
 #: templates/login.html:17

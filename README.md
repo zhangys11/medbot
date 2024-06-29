@@ -1,12 +1,15 @@
 # TODO
 
-用户登录管理  
-中医体质评测表 正确性检验/保存/加载
+/constitution 中医体质评测表 正确性检验
+参照：https://www.wjx.cn/m/3526126.aspx
+
+评测表保存/加载
 
 # About medbot
 
 A medical KG chatbot based on neo4j  
-This project is based on github.com/Groot-lin/MedicalChatbots. 
+This project is based on github.com/Groot-lin/MedicalChatbots.  
+仅知识图谱使用neo4j图数据库，用户等其它数据仍使用轻量级关系型数据库。
 
 # Modules
 
@@ -17,7 +20,7 @@ This project is based on github.com/Groot-lin/MedicalChatbots.
 
 # Install
 
-1. pip install pyahocorasick flask_cors
+1. pip install pyahocorasick flask_cors flask-login flask-babel
 
 2. 打开build_medicalgraph.py文件
 
@@ -29,11 +32,15 @@ This project is based on github.com/Groot-lin/MedicalChatbots.
 
 4. python run.py
 
-5. 修改static目录下的index.html的第67行和95行,ip和端口改成与main.py中的一致
+5. 修改static目录下的index.html的第67行和95行,ip和端口改成与run.py中的一致
 
 6. 在浏览器中打开 localhost:5000
 
-# TODO
+# i18n using flask-babel
 
-/constitution  
-https://www.wjx.cn/m/3526126.aspx
+```
+pybabel extract -F babel.cfg -o messages.pot .  
+pybabel init -i messages.pot -d translations -l ja / zh  
+pybabel compile -d translations  
+pybabel update -i messages.pot -d translations
+```

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-06-29 21:18+0800\n"
+"POT-Creation-Date: 2024-06-29 22:35+0800\n"
 "PO-Revision-Date: 2024-06-29 21:19+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh\n"
@@ -41,6 +41,22 @@ msgstr "注册"
 #: templates/base.html:42
 msgid "Logout"
 msgstr "注销"
+
+#: templates/index.html:5
+msgid "Welcome"
+msgstr ""
+
+#: templates/index.html:5
+msgid "Welcome"
+msgstr "欢迎"
+
+#: templates/index.html:13
+msgid "Start a chat"
+msgstr "开启问诊"
+
+#: templates/index.html:16
+msgid "Take a survey"
+msgstr "体质量表"
 
 #: templates/login.html:17
 msgid "Your Email"
