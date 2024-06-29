@@ -8,6 +8,7 @@
     <title>Flask Auth Example</title>
     <link rel="shortcut icon" href="/static/img/logo.jpg">
     <link rel="stylesheet" href="/static/css/bulma.css"/>
+    <link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css">
 </head>
 
 <body>
@@ -42,6 +43,25 @@
                                 {{_('Logout')}}
                             </a>
                             {% endif %}
+
+
+                            <div class="dropdown is-active">
+                                <div class="dropdown-trigger">
+                                  <button class="button" aria-haspopup="true" aria-controls="dropdown-menu"> <!-- onclick="$('parent').toggleClass('is-active')"-->
+                                    <span class="icon">
+                                      <i class="fa fa-globe" aria-hidden="true"></i>
+                                    </span>
+                                  </button>
+                                </div>
+
+                                <div class="dropdown-menu" id="dropdown-menu" role="menu">
+                                    <div class="dropdown-content">
+                                        <a href="/language/en" class="dropdown-item">en</a>
+                                        <a href="/language/zh" class="dropdown-item">zh</a>
+                                        <a href="/language/ja" class="dropdown-item">ja</a>
+                                    </div>
+                                </div>
+                            </div>                                          
                         </div>
                     </div>
                 </div>
