@@ -20,61 +20,61 @@ msgstr ""
 
 #: templates/base.html:23
 msgid "Home"
-msgstr ""
+msgstr "ホーム"
 
 #: templates/base.html:26
 msgid "Chat"
-msgstr ""
+msgstr "チャット"
 
 #: templates/base.html:29
 msgid "Scale"
-msgstr ""
+msgstr "クエスチョンエア"
 
 #: templates/base.html:34 templates/login.html:5 templates/login.html:31
 msgid "Login"
-msgstr ""
+msgstr "ログイン"
 
 #: templates/base.html:37 templates/signup.html:5 templates/signup.html:33
 msgid "Sign Up"
-msgstr ""
+msgstr "サインアップ"
 
 #: templates/base.html:42
 msgid "Logout"
-msgstr ""
+msgstr "ログアウト"
 
 #: templates/index.html:5
 msgid "Welcome"
-msgstr ""
+msgstr "ようこそ"
 
 #: templates/index.html:13
 msgid "Start a chat"
-msgstr ""
+msgstr "チャットを開始する"
 
 #: templates/index.html:16
 msgid "Take a survey"
-msgstr ""
+msgstr "アンケートに答える"
 
 #: templates/login.html:17
 msgid "Your Email"
-msgstr ""
+msgstr "メールアドレス"
 
 #: templates/login.html:23
 msgid "Your Password"
-msgstr ""
+msgstr "パスワード"
 
 #: templates/login.html:28
 msgid "Remember me"
-msgstr ""
+msgstr "記憶する"
 
 #: templates/signup.html:17
 msgid "Email"
-msgstr ""
+msgstr "メールアドレス"
 
 #: templates/signup.html:23
 msgid "Name"
-msgstr ""
+msgstr "ユーザー名"
 
 #: templates/signup.html:29
 msgid "Password"
-msgstr ""
+msgstr "パスワード"
 
