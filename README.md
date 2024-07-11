@@ -1,5 +1,6 @@
 # TODO
 
+welcome bug  
 i18n ui
 
 /constitution 中医体质评测表 正确性检验
@@ -28,7 +29,7 @@ This project is based on github.com/Groot-lin/MedicalChatbots.
 
 修改信息包括neo4j数据库的ip地址,端口号,用户名和密码
 
-运行最下面的main函数(数据量较大,可能会运行几十分钟)
+运行最下面的main函数(导入知识图谱数据，数据量较大,可能会运行几十分钟)
 
 3. neo4j.bat console
 

@@ -44,10 +44,6 @@ msgstr "注销"
 
 #: templates/index.html:5
 msgid "Welcome"
-msgstr ""
-
-#: templates/index.html:5
-msgid "Welcome"
 msgstr "欢迎"
 
 #: templates/index.html:13
