@@ -16,9 +16,35 @@
     {{_('Take a survey')}}
 </a>
 
-<h1>TODO: 
-    Chat dialog  
-    列表：您的体测结果</h1>
+<h1>{{ _('Survey Results') }}</h1>
+<table border="1">
+    <thead>
+        <tr>
+            <th>User Email</th>
+            <th>阳虚质</th>
+            <th>阴虚质</th>
+            <th>气虚质</th>
+            <th>痰湿质</th>
+            <th>温热质</th>
+            <th>血瘀质</th>
+            <th>特禀质</th>
+            <th>气郁质</th>
+            <th>平和质</th>
+            <th>Timestamp</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in data %}
+        <tr>
+            <td>{{ entry.useremail }}</td>
+            {% for q in entry.questionnaireData %}
+            <td>{{ q }}</td>
+            {% endfor %}
+            <td>{{ entry.timestamp }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 {% endblock %}
 <!--<iframe src="/chat"></iframe>-->
