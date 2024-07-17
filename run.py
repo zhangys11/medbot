@@ -1,6 +1,7 @@
 import os
 import uuid
 import json
+import time
 from datetime import datetime
 from keyword_template import KeyWordTemplate
 from flask import g, Flask, render_template, request, current_app, send_file, redirect, url_for, jsonify, session, Blueprint, flash, abort, make_response
@@ -52,6 +53,7 @@ login_manager.init_app(app)
 
 # a mixin is a special kind of multiple inheritance that provides limited functionality and polymorphic resonance for a child class.
 class User(UserMixin, db.Model):
+    __tablename__ = 'user'
     # primary keys are required by SQLAlchemy
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True)
@@ -60,18 +62,21 @@ class User(UserMixin, db.Model):
 
 
 class SurveyResult(db.Model):
+    __tablename__ = 'survey_result' 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('User.id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    user_email = db.Column(db.String(100), db.ForeignKey('user.email'), nullable=True)
     json_data = db.Column(db.Text, nullable=False)  # 使用 Text 类型存储 JSON 字符串
+    results = db.Column(db.Text, nullable=False)  # 新增字段存储结果
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return f'<SurveyResult user_id={self.user_id}, json_data="{self.json_data}">'
+        return f'<SurveyResult user_email={self.user_email}, json_data="{self.json_data}">'
 
     # 获取关联的用户对象
     @property
     def user(self):
-        return User.query.get(self.user_id)
+        return User.query.get(self.user_email)
 
 
 @login_manager.user_loader
@@ -156,11 +161,9 @@ def index():
     # g.lang_code = request.accept_languages.best_match(['en', 'zh', 'ja'])
     # send_file("templates/index.html")
     try:
-        with open('survey_data.json', 'r') as f:
-            all_data = json.load(f)
-        # 过滤出当前用户的数据
-        user_data = [
-            entry for entry in all_data if entry['useremail'] == current_user.email]
+        user_data = SurveyResult.query.filter_by(user_email=current_user.email).all()
+        for entry in user_data:
+            entry.questionnaire_data = json.loads(entry.json_data)  # 解析 JSON 数据
     except Exception as e:
         print(f"Error reading data: {e}")
         user_data = []
@@ -181,13 +184,24 @@ def scale():
         user_id = current_user.id
         json_data = json.dumps(data)
 
-        result = SurveyResult(user_id=user_id, json_data=json_data)
+        result = SurveyResult(
+            user_id=user_id, 
+            user_email=current_user.email, 
+            json_data=json_data,
+            results=json.dumps(data.get('results')),
+            created_at=datetime.utcnow()
+            )
 
         db.session.add(result)
         db.session.commit()
 
         flash('Survey submitted successfully.')
-    return render_template("scale.html")
+        return jsonify(success=True)
+    record_id = request.args.get('id')
+    record = None
+    if record_id:
+        record = SurveyResult.query.get(record_id)
+    return render_template("scale.html", record=record)
 
 
 CORS(app)  # Cross-Origin Resource Sharing
@@ -237,47 +251,68 @@ constitution_questions = {
     '平和质': 8,
 }
 
+data_file = 'survey_data.json'
+
 
 @app.route("/survey", methods=['POST'])
 @login_required
 def submit_survey():
     data = request.json
-    record = {
-        'useremail': data.get('userEmail'),
-        'questionnaireData': data.get('questionnaireData'),
-        'timestamp': data.get('timestamp')
-    }
+    timestamp_str = data.get('timestamp')
+    # 将字符串转换为 datetime 对象
+    timestamp = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M')
+    new_record = SurveyResult(
+        user_id = current_user.id,
+        # 'id': generate_unique_id(),  # 每次生成新的id
+        user_email = data.get('userEmail'),
+        json_data = json.dumps(data.get('questionnaireData')),
+        results = json.dumps(data.get('results')),
+        created_at = timestamp
+    )
+    print(new_record)
     try:
-        # 读取现有数据
-        if os.path.exists('survey_data.json'):
-            with open('survey_data.json', 'r') as f:
-                all_data = json.load(f)
-        else:
-            all_data = []
-
-        # 添加新的记录
-        all_data.append(record)
-
-        # 保存回文件
-        with open('survey_data.json', 'w') as f:
-            json.dump(all_data, f, indent=4)
-
+        db.session.add(new_record)
+        db.session.commit()
         return jsonify(success=True)
     except Exception as e:
         print(f"Error saving data: {e}")
+        db.session.rollback()
         return jsonify(success=False), 500
 
 
 @app.route('/view-survey-results', methods=['GET'])
 def view_survey_results():
-    data = request.json.get('questionnaireData')
-    user_id = current_user.id
-    json_data = json.dumps(data)
-    result = SurveyResult(user_id=user_id, json_data=json_data)
+    # data = request.json.get('questionnaireData')
+    # user_id = current_user.id
+    # json_data = json.dumps(data)
+    # result = SurveyResult(user_id=user_id, json_data=json_data)
     # 查询数据库中的所有问卷结果
     survey_results = SurveyResult.query.all()
     # 将查询结果传递给模板
     return render_template('view_survey_results.html', survey_results=survey_results)
+
+
+@app.route('/get_survey_data', methods=['GET'])
+@login_required
+def get_survey_data():
+    record_id = request.args.get('id')
+    record = SurveyResult.query.get(record_id)
+    if record:
+        data = {
+            'id': record.id,
+            'user_email': record.user_email,
+            'questionnaire_data': json.loads(record.json_data),
+            'results': json.loads(record.results),
+            'created_at': record.created_at
+        }
+        print(data)
+        return jsonify(data)
+    else:
+        return jsonify({'error': 'Record not found'}), 404
+
+
+def generate_unique_id():
+    return str(int(time.time() * 1000))  # 时间戳生成唯一ID
 
 
 if __name__ == '__main__':
@@ -285,5 +320,10 @@ if __name__ == '__main__':
     # create_all() creates foreign key constraints between tables usually inline with the table definition itself, and for this reason it also generates the tables in order of their dependency.
     with app.app_context():
         db.create_all()
+        # 添加一个初始用户进行测试
+        if not User.query.filter_by(email='test@example.com').first():
+            new_user = User(email='test@example.com', name='Test User', password=generate_password_hash('password', method='pbkdf2:sha256'))
+            db.session.add(new_user)
+            db.session.commit()
 
     app.run(host='localhost', port=5001, debug=True)

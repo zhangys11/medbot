@@ -17,6 +17,30 @@
         .dropdown.is-active .dropdown-content {
             display: block;
         }
+
+        .navbar-end {
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-trigger .button {
+            border: none;
+            /* 去掉按钮边框 */
+            box-shadow: none;
+            /* 去掉按钮阴影 */
+            padding: 0;
+            /* 去掉按钮内边距 */
+            background-color: transparent;
+            /* 透明背景 */
+            margin-left: 1rem;
+            /* 增加左边距，让图标与其他项分开 */
+        }
+
+        .dropdown-trigger .icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -69,7 +93,6 @@
                                 {{_('Logout')}}
                             </a>
                             {% endif %}
-
 
                             <div class="dropdown">
                                 <div class="dropdown-trigger">
