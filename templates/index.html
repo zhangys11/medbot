@@ -6,6 +6,7 @@
 </h1>
 
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" />
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css" />
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.10.1/jquery-ui.js"></script>
 
@@ -16,35 +17,51 @@
     {{_('Take a survey')}}
 </a>
 
-<h1>{{ _('Survey Results') }}</h1>
-<table border="1">
+<h1 class="title is-4" style="margin-top: 2rem; font-weight: bold;">{{ _('Survey Results') }}</h1>
+
+<table class="table is-striped is-bordered is-fullwidth">
     <thead>
         <tr>
-            <th>User Email</th>
-            <th>阳虚质</th>
-            <th>阴虚质</th>
-            <th>气虚质</th>
-            <th>痰湿质</th>
-            <th>温热质</th>
-            <th>血瘀质</th>
-            <th>特禀质</th>
-            <th>气郁质</th>
-            <th>平和质</th>
-            <th>Timestamp</th>
+            <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
+                阳虚质</th>
+            <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
+                阴虚质</th>
+            <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
+                气虚质</th>
+            <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
+                痰湿质</th>
+            <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
+                温热质</th>
+            <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
+                血瘀质</th>
+            <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
+                特禀质</th>
+            <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
+                气郁质</th>
+            <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
+                平和质</th>
+            <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
+                Timestamp</th>
+            <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
+                Action</th>
         </tr>
     </thead>
     <tbody>
         {% for entry in data %}
         <tr>
-            <td>{{ entry.useremail }}</td>
-            {% for q in entry.questionnaireData %}
-            <td>{{ q }}</td>
+            <!-- {% set questionnaire_data = entry.questionnaire_data %} -->
+            {% for q in entry.questionnaire_data %}
+            <td style="text-align: center; vertical-align: middle; font-size: 0.7rem;">{{ q }}</td>
             {% endfor %}
-            <td>{{ entry.timestamp }}</td>
+            <td style="text-align: center; vertical-align: middle; font-size: 0.7rem;">
+                {{entry.created_at.strftime('%Y-%m-%d %H:%M')}}</td>
+            <td style="text-align: center; vertical-align: middle;">
+                <a href="{{ url_for('scale', id=entry.id) }}" class="button is-small is-info">查看</a>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 
+
 {% endblock %}
-<!--<iframe src="/chat"></iframe>-->
