@@ -6131,6 +6131,43 @@
     }
 
 
+    #submitBtn,
+    #returnBtn {
+        background-color: #0099ff;
+        /* 设置按钮背景色 */
+        color: white;
+        /* 设置按钮文字颜色 */
+        border: none;
+        /* 去掉边框 */
+        padding: 15px 32px;
+        /* 设置按钮的内边距 */
+        text-align: center;
+        /* 设置文字居中 */
+        text-decoration: none;
+        /* 去掉文字下划线 */
+        display: inline-block;
+        /* 设置按钮的显示方式 */
+        font-size: 16px;
+        /* 设置文字大小 */
+        margin: 4px 2px;
+        /* 设置按钮的外边距 */
+        cursor: pointer;
+        /* 鼠标悬停时显示手型 */
+        border-radius: 8px;
+        /* 设置按钮的圆角 */
+        transition-duration: 0.4s;
+        /* 设置过渡时间 */
+    }
+
+    #submitBtn:hover,
+    #returnBtn:hover {
+        background-color: #007acc;
+        /* 鼠标悬停时的背景色 */
+        color: white;
+        /* 鼠标悬停时的文字颜色 */
+    }
+
+
 
 
 
@@ -7672,6 +7709,7 @@
                 <div class="cutfield" id="divCut1" qtopic="10" topic="c1">
                     <div>（注：标有*的条目需逆向计分，即1→5,2→4,3→3,4→2,5→1，再用公式转化分）</div>
                     <input type="submit" value="提交" id="submitBtn" name='submitbutton' />
+                    <button id="returnBtn">返回首页</button>
                     <!-- 提交成功后显示的提示信息 -->
                     <div id="submitSuccess" style="display:none;">
                         <h2>提交成功！</h2>
@@ -7691,6 +7729,9 @@
     </form>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('returnBtn').addEventListener('click', function () {
+                window.location.href = '/'; // 跳转到index.html页面
+            });
             document.querySelectorAll('.yxz1-off, .yinxz1-off, .qxz1-off, .tsz1-off, .srz1-off, .xyz1-off, .tsz2-off, .qyz1-off, .rate-off').forEach(function (btn) {
                 btn.addEventListener('click', function () {
                     var dval = this.getAttribute('dval');
@@ -8159,20 +8200,47 @@
             var results = {};
             var constitutionNames = ['阳虚质', '阴虚质', '气虚质', '痰湿质', '湿热质', '血瘀质', '特禀质', '气郁质', '平和质'];
 
-            for (let i = 0; i < constitutionNames.length; i++) {
-                if (i < 8) {
-                    results[constitutionNames[i]] = {
-                        score: scores[i],
-                        transformed_score: transformed_scores[i],
-                        status: transformed_scores[i] === '未选择' ? '未选择' : (transformed_scores[i] < 30 ? '否' : (transformed_scores[i] < 40 ? '倾向是' : '是'))
-                    };
+            // 计算平和质的状态
+            var transformed_scores_1_to_8 = transformed_scores.slice(0, 8);
+            var pinghe_transformed_score = transformed_scores[8];
+            if (pinghe_transformed_score >= 60 && transformed_scores_1_to_8.every(score => score < 30)) {
+                results['平和质'] = {
+                    score: scores[8],
+                    transformed_score: transformed_scores[8],
+                    status: '是'
+                };
+            } else if (pinghe_transformed_score >= 60 && transformed_scores_1_to_8.every(score => score < 40)) {
+                results['平和质'] = {
+                    score: scores[8],
+                    transformed_score: transformed_scores[8],
+                    status: '基本是'
+                };
+            } else {
+                results['平和质'] = {
+                    score: scores[8],
+                    transformed_score: transformed_scores[8],
+                    status: '否'
+                };
+            }
+
+            // 计算偏颇体质的状态
+            for (let i = 0; i < 8; i++) {
+                let transformed_score = transformed_scores[i];
+                let status;
+                if (transformed_score === '未选择') {
+                    status = '未选择';
+                } else if (transformed_score >= 40) {
+                    status = '是';
+                } else if (transformed_score >= 30 && transformed_score < 40) {
+                    status = '倾向是';
                 } else {
-                    results[constitutionNames[i]] = {
-                        score: scores[i],
-                        transformed_score: transformed_scores[i],
-                        status: transformed_scores[i] >= 60 && transformed_scores.slice(0, 8).every(score => score < 30) ? '是' : (transformed_scores[i] >= 60 && transformed_scores.slice(0, 8).every(score => score < 40) ? '基本是' : '否')
-                    };
+                    status = '否';
                 }
+                results[constitutionNames[i]] = {
+                    score: scores[i],
+                    transformed_score: transformed_scores[i],
+                    status: status
+                };
             }
 
             return results;

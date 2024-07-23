@@ -31,7 +31,7 @@
             <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
                 痰湿质</th>
             <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
-                温热质</th>
+                湿热质</th>
             <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
                 血瘀质</th>
             <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
@@ -49,12 +49,26 @@
     <tbody>
         {% for entry in data %}
         <tr>
-            <!-- {% set questionnaire_data = entry.questionnaire_data %} -->
-            {% for q in entry.questionnaire_data %}
-            <td style="text-align: center; vertical-align: middle; font-size: 0.7rem;">{{ q }}</td>
-            {% endfor %}
             <td style="text-align: center; vertical-align: middle; font-size: 0.7rem;">
-                {{entry.created_at.strftime('%Y-%m-%d %H:%M')}}</td>
+                {{ entry.results_data['阳虚质']['status'] | default('未选择') }}</td>
+            <td style="text-align: center; vertical-align: middle; font-size: 0.7rem;">
+                {{ entry.results_data['阴虚质']['status'] | default('未选择') }}</td>
+            <td style="text-align: center; vertical-align: middle; font-size: 0.7rem;">
+                {{ entry.results_data['气虚质']['status'] | default('未选择') }}</td>
+            <td style="text-align: center; vertical-align: middle; font-size: 0.7rem;">
+                {{ entry.results_data['痰湿质']['status'] | default('未选择') }}</td>
+            <td style="text-align: center; vertical-align: middle; font-size: 0.7rem;">
+                {{ entry.results_data['湿热质']['status'] | default('未选择') }}</td>
+            <td style="text-align: center; vertical-align: middle; font-size: 0.7rem;">
+                {{ entry.results_data['血瘀质']['status'] | default('未选择') }}</td>
+            <td style="text-align: center; vertical-align: middle; font-size: 0.7rem;">
+                {{ entry.results_data['特禀质']['status'] | default('未选择') }}</td>
+            <td style="text-align: center; vertical-align: middle; font-size: 0.7rem;">
+                {{ entry.results_data['气郁质']['status'] | default('未选择') }}</td>
+            <td style="text-align: center; vertical-align: middle; font-size: 0.7rem;">
+                {{ entry.results_data['平和质']['status'] | default('未选择') }}</td>
+            <td style="text-align: center; vertical-align: middle; font-size: 0.7rem;">
+                {{ entry.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
             <td style="text-align: center; vertical-align: middle;">
                 <a href="{{ url_for('scale', id=entry.id) }}" class="button is-small is-info">查看</a>
             </td>
@@ -62,6 +76,4 @@
         {% endfor %}
     </tbody>
 </table>
-
-
 {% endblock %}
