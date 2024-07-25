@@ -41,9 +41,9 @@
             <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
                 平和质</th>
             <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
-                Timestamp</th>
+                {{ _('Timestamp') }}</th>
             <th style="background-color: #9dc0f9; color: #333; font-weight: bold; text-align: center; padding: 0.5rem;">
-                Action</th>
+                {{ _('Action') }}</th>
         </tr>
     </thead>
     <tbody>
@@ -70,7 +70,7 @@
             <td style="text-align: center; vertical-align: middle; font-size: 0.7rem;">
                 {{ entry.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
             <td style="text-align: center; vertical-align: middle;">
-                <a href="{{ url_for('scale', id=entry.id) }}" class="button is-small is-info">查看</a>
+                <a href="{{ url_for('scale', id=entry.id) }}" class="button is-small is-info">{{ _('Details') }}</a>
             </td>
         </tr>
         {% endfor %}

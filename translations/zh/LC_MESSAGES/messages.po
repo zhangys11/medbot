@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-06-29 22:35+0800\n"
+"POT-Creation-Date: 2024-07-25 15:05+0800\n"
 "PO-Revision-Date: 2024-06-29 21:19+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh\n"
@@ -18,27 +18,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.14.0\n"
 
-#: templates/base.html:23
+#: templates/base.html:74
 msgid "Home"
 msgstr "首页"
 
-#: templates/base.html:26
+#: templates/base.html:77
 msgid "Chat"
 msgstr "问诊"
 
-#: templates/base.html:29
+#: templates/base.html:80
 msgid "Scale"
 msgstr "量表"
 
-#: templates/base.html:34 templates/login.html:5 templates/login.html:31
+#: templates/base.html:85 templates/login.html:5 templates/login.html:31
 msgid "Login"
 msgstr "登录"
 
-#: templates/base.html:37 templates/signup.html:5 templates/signup.html:33
+#: templates/base.html:88 templates/signup.html:5 templates/signup.html:33
 msgid "Sign Up"
 msgstr "注册"
 
-#: templates/base.html:42
+#: templates/base.html:93
 msgid "Logout"
 msgstr "注销"
 
@@ -46,13 +46,30 @@ msgstr "注销"
 msgid "Welcome"
 msgstr "欢迎"
 
-#: templates/index.html:13
+#: templates/index.html:14
 msgid "Start a chat"
 msgstr "开启问诊"
 
-#: templates/index.html:16
+#: templates/index.html:17
 msgid "Take a survey"
 msgstr "体质量表"
+
+#: templates/index.html:20
+msgid "Survey Results"
+msgstr "历史记录"
+
+#: templates/index.html:44
+msgid "Timestamp"
+msgstr "时间戳"
+
+#: templates/index.html:46
+msgid "Action"
+msgstr "操作"
+
+#: templates/index.html:73
+#, fuzzy
+msgid "Details"
+msgstr "详情"
 
 #: templates/login.html:17
 msgid "Your Email"

@@ -54,6 +54,22 @@ msgstr "チャットを開始する"
 msgid "Take a survey"
 msgstr "アンケートに答える"
 
+#: templates/index.html:20
+msgid "Survey Results"
+msgstr "歴史"
+
+#: templates/index.html:44
+msgid "Timestamp"
+msgstr "タイムスタンプ"
+
+#: templates/index.html:46
+msgid "Action"
+msgstr "操作"
+
+#: templates/index.html:73
+msgid "Details"
+msgstr "ビュー "
+
 #: templates/login.html:17
 msgid "Your Email"
 msgstr "メールアドレス"
