@@ -158,12 +158,12 @@ app.register_blueprint(auth)
 @app.route("/")
 @login_required
 def index():
-    # g.lang_code = request.accept_languages.best_match(['en', 'zh', 'ja'])
-    # send_file("templates/index.html")
     try:
         user_data = SurveyResult.query.filter_by(user_email=current_user.email).all()
         for entry in user_data:
             entry.questionnaire_data = json.loads(entry.json_data)  # 解析 JSON 数据
+            entry.results_data = json.loads(entry.results)  # 解析 results 字段
+            print(entry.results_data)
     except Exception as e:
         print(f"Error reading data: {e}")
         user_data = []
