@@ -1,18 +1,15 @@
 # TODO
 
-welcome bug  
-i18n ui
-
 /constitution 中医体质评测表 正确性检验
 参照：https://www.wjx.cn/m/3526126.aspx
-
-评测表保存/加载
 
 # About medbot
 
 A medical KG chatbot based on neo4j  
 This project is based on github.com/Groot-lin/MedicalChatbots.  
 仅知识图谱使用neo4j图数据库，用户等其它数据仍使用轻量级关系型数据库。
+
+
 
 # Modules
 
