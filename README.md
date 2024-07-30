@@ -1,15 +1,8 @@
-# TODO
-
-/constitution 中医体质评测表 正确性检验
-参照：https://www.wjx.cn/m/3526126.aspx
-
 # About medbot
 
 A medical KG chatbot based on neo4j  
 This project is based on github.com/Groot-lin/MedicalChatbots.  
 仅知识图谱使用neo4j图数据库，用户等其它数据仍使用轻量级关系型数据库。
-
-
 
 # Modules
 
@@ -44,3 +37,7 @@ pybabel init -i messages.pot -d translations -l ja / zh
 pybabel compile -d translations  
 pybabel update -i messages.pot -d translations
 ```
+
+# Reference
+
+https://www.wjx.cn/m/3526126.aspx

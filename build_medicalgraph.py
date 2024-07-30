@@ -14,8 +14,7 @@ class MedicalGraph:
             cur_dir, 'data/medicine.json')  # 获取json文件路径
         # self.data_path = os.getcwd() + '/data/medicine.json'
         print('Loading data from: ', self.data_path)
-        self.g = Graph("bolt://localhost:7687",
-                       auth=("neo4j", "12345678"))  # 修改信息
+        self.g = Graph("http://127.0.0.1:7474", auth=("neo4j", "123456"))
 
     '''读取文件'''
 
