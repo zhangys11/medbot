@@ -1,16 +1,21 @@
-coding: "utf-8"
-import os
-import json
 from py2neo import Graph, Node
+import json
+import os
+coding: "utf-8"
 
 '''构建neo4j数据库'''
+
+
 class MedicalGraph:
     def __init__(self):
-        cur_dir = '/'.join(os.path.abspath(__file__).split('/')[:-1])  # 获取当前绝对路径的上层目录 linux中应用'/'split和join
-        self.data_path = os.path.join(cur_dir, 'data/medicine.json')  # 获取json文件路径
+        # 获取当前绝对路径的上层目录 linux中应用'/'split和join
+        cur_dir = '/'.join(os.path.abspath(__file__).split('/')[:-1])
+        self.data_path = os.path.join(
+            cur_dir, 'data/medicine.json')  # 获取json文件路径
         # self.data_path = os.getcwd() + '/data/medicine.json'
         print('Loading data from: ', self.data_path)
-        self.g = Graph("http://127.0.0.1/:7474", auth=("neo4j", "123456"))# 修改信息
+        self.g = Graph("bolt://localhost:7687",
+                       auth=("neo4j", "12345678"))  # 修改信息
 
     '''读取文件'''
 
@@ -23,6 +28,7 @@ class MedicalGraph:
         drugs = []  # 药品
         foods = []  # 食物
         symptoms = []  # 症状
+        tcms = []  # 中药材
 
         # 这一项没有出现在节点中，在后面编程中用于创建疾病信息表
         disease_infos = []  # 疾病信息
@@ -35,14 +41,20 @@ class MedicalGraph:
         rels_symptom = []  # 疾病-症状关系
         rels_acompany = []  # 疾病-并发关系
         rels_category = []  # 疾病-科室的关系
+        rels_tcm_symptom = []  # 中药材-症状关系
 
         count = 0
         # 构造疾病字典
-        for data in open(self.data_path, encoding="utf-8"):
+        # 读取整个 JSON 文件
+        with open(self.data_path, encoding="utf-8") as file:
+            data_list = json.load(file)
+
+        # 构造疾病字典
+        for data_json in data_list:
             disease_dict = {}
             count += 1
             print(count)
-            data_json = json.loads(data)  # 读取数据
+            # data_json = json.loads(data)  # 读取数据
             disease = data_json['name']
             disease_dict['name'] = disease
             diseases.append(disease)
@@ -59,15 +71,25 @@ class MedicalGraph:
             # 查找一下词条是否在提取出来的文档段中，每一条文档段内容长度不一
             if 'symptom' in data_json:
                 symptoms += data_json['symptom']  # +号用于组合列表
-                for symptom in data_json['symptom']:  # 用for循环的原因：一个疾病可能对应好几个症状，手画图表示
-                    rels_symptom.append([disease, symptom])  # 对于每个症状都建立一个疾病——症状的关系
+                # 用for循环的原因：一个疾病可能对应好几个症状，手画图表示
+                for symptom in data_json['symptom']:
+                    # 对于每个症状都建立一个疾病——症状的关系
+                    rels_symptom.append([disease, symptom])
+
+            if 'tcm' in data_json:
+                tcms += data_json['tcm']
+                for tcm in data_json['tcm']:
+                    for symptom in data_json['symptom']:
+                        rels_tcm_symptom.append([tcm, symptom])
 
             if 'acompany' in data_json:
                 for acompany in data_json['acompany']:  # 同上，一个疾病可能伴随多个并发症
-                    rels_acompany.append([disease, acompany])  # 建立一个疾病——伴随疾病的关系
+                    rels_acompany.append(
+                        [disease, acompany])  # 建立一个疾病——伴随疾病的关系
 
             if 'desc' in data_json:
-                disease_dict['desc'] = data_json['desc']  # 疾病描述，这里不是关系，而是定义的属性。根据业务要求把一个字段定义为关系或者节点的属性
+                # 疾病描述，这里不是关系，而是定义的属性。根据业务要求把一个字段定义为关系或者节点的属性
+                disease_dict['desc'] = data_json['desc']
 
             if 'prevent' in data_json:
                 disease_dict['prevent'] = data_json['prevent']  # 疾病预防
@@ -83,7 +105,8 @@ class MedicalGraph:
 
             if 'cure_department' in data_json:
                 cure_department = data_json['cure_department']  # 治疗科室
-                rels_category.append([disease, cure_department[0]])
+                if cure_department:
+                    rels_category.append([disease, cure_department[0]])
                 disease_dict['cure_department'] = cure_department
                 departments += cure_department
 
@@ -91,7 +114,8 @@ class MedicalGraph:
                 disease_dict['cure_way'] = data_json['cure_way']  # 治疗途径
 
             if 'cure_lasttime' in data_json:
-                disease_dict['cure_lasttime'] = data_json['cure_lasttime']  # 治疗时间
+                # 治疗时间
+                disease_dict['cure_lasttime'] = data_json['cure_lasttime']
 
             if 'cured_prob' in data_json:
                 disease_dict['cured_prob'] = data_json['cured_prob']  # 治愈概率
@@ -121,9 +145,9 @@ class MedicalGraph:
             disease_infos.append(disease_dict)  # 添加疾病信息list
 
         # 共返回6类节点,七种关系
-        return set(drugs), set(foods), set(checks), set(departments), set(symptoms), set(diseases), disease_infos, \
+        return set(drugs), set(foods), set(checks), set(departments), set(symptoms), set(diseases), set(tcms), disease_infos, \
             rels_check, rels_noteat, rels_doeat, rels_commondrug, \
-            rels_symptom, rels_acompany, rels_category
+            rels_symptom, rels_acompany, rels_category, rels_tcm_symptom
 
     '''建立节点'''
 
@@ -137,22 +161,23 @@ class MedicalGraph:
         return
 
     '''创建知识图谱中心疾病的节点,存放节点信息'''
+
     def create_diseases_nodes(self, disease_infos):
         count = 0
         for disease_dict in disease_infos:
             node = Node("Disease", name=disease_dict['name'], desc=disease_dict['desc'],
                         prevent=disease_dict['prevent'], cause=disease_dict['cause'],
                         easy_get=disease_dict['easy_get'], cure_lasttime=disease_dict['cure_lasttime'],
-                        cure_department=disease_dict['cure_department']
-                        , cure_way=disease_dict['cure_way'], cured_prob=disease_dict['cured_prob'])  # 各个疾病节点的属性
+                        cure_department=disease_dict['cure_department'], cure_way=disease_dict['cure_way'], cured_prob=disease_dict['cured_prob'])  # 各个疾病节点的属性
             self.g.create(node)
             count += 1
             print(count)
         return
 
     '''创建知识图谱实体节点类型,节点个数多，创建过程慢'''
+
     def create_graphnodes(self):
-        Drugs, Foods, Checks, Departments, Symptoms, Diseases, disease_infos, rels_check, rels_noteat, rels_doeat, rels_commondrug, rels_symptom, rels_acompany, rels_category = self.read_nodes()
+        Drugs, Foods, Checks, Departments, Symptoms, Diseases, Tcms, disease_infos, rels_check, rels_noteat, rels_doeat, rels_commondrug, rels_symptom, rels_acompany, rels_category, rels_tcm_symptom = self.read_nodes()
         self.create_diseases_nodes(disease_infos)  # 调用上面的疾病节点创建函数
         self.create_node('Drug', Drugs)  # 创建药物节点
         print(len(Drugs))
@@ -163,25 +188,41 @@ class MedicalGraph:
         self.create_node('Department', Departments)  # 创建科室节点
         print(len(Departments))
         self.create_node('Symptom', Symptoms)  # 创建症状节点
+        print(len(Symptoms))
+        self.create_node('Tcm', Tcms)  # 创建中药材节点
+        print(len(Tcms))
         return
 
     '''创建11种实体关系边'''
+
     def create_graphrels(self):
-        Drugs, Foods, Checks, Departments, Symptoms, Diseases, disease_infos, rels_check, rels_noteat, rels_doeat, rels_commondrug, rels_symptom, rels_acompany, rels_category = self.read_nodes()
-        self.create_relationship('Disease', 'Food', rels_noteat, 'no_eat', '忌吃')
+        Drugs, Foods, Checks, Departments, Symptoms, Diseases, Tcms, disease_infos, rels_check, rels_noteat, rels_doeat, rels_commondrug, rels_symptom, rels_acompany, rels_category, rels_tcm_symptom = self.read_nodes()
+        self.create_relationship(
+            'Disease', 'Food', rels_noteat, 'no_eat', '忌吃')
         self.create_relationship('Disease', 'Food', rels_doeat, 'do_eat', '宜吃')
-        self.create_relationship('Disease', 'Check', rels_check, 'need_check', '诊断检查')
-        self.create_relationship('Disease', 'Symptom', rels_symptom, 'has_symptom', '症状')
-        self.create_relationship('Disease', 'Disease', rels_acompany, 'acompany_with', '并发症')
-        self.create_relationship('Disease', 'Department', rels_category, 'belongs_to', '所属科室')
+        self.create_relationship(
+            'Disease', 'Check', rels_check, 'need_check', '诊断检查')
+        self.create_relationship('Disease', 'Symptom',
+                                 rels_symptom, 'has_symptom', '症状')
+        self.create_relationship('Disease', 'Disease',
+                                 rels_acompany, 'acompany_with', '并发症')
+        self.create_relationship(
+            'Disease', 'Department', rels_category, 'belongs_to', '所属科室')
+        self.create_relationship(
+            'Tcm', 'Symptom', rels_tcm_symptom, 'tcm_symptom', '中药材对应症状')
 
     '''创建实体关联边'''
-    def create_relationship(self, start_node, end_node, edges, rel_type, rel_name):  # 起点节点，终点节点，边，关系类型，关系名字
+
+    # 起点节点，终点节点，边，关系类型，关系名字
+    def create_relationship(self, start_node, end_node, edges, rel_type, rel_name):
         count = 0
         # 去重处理
         set_edges = []
         for edge in edges:
-            set_edges.append('###'.join(edge))  # 使用###作为不同关系之间分隔的标志
+            if isinstance(edge, list):
+                set_edges.append('###'.join(edge))  # 使用###作为不同关系之间分隔的标志
+            else:
+                set_edges.append(edge)
         all = len(set(set_edges))
         for edge in set(set_edges):
             edge = edge.split('###')  # 选取前两个关系，因为两个节点之间一般最多两个关系
@@ -198,6 +239,7 @@ class MedicalGraph:
         return
 
     '''导出数据'''
+
     def export_data(self):
         Drugs, Foods, Checks, Departments, Symptoms, Diseases, disease_infos, rels_check, rels_noteat, rels_doeat, rels_commondrug, rels_symptom, rels_acompany, rels_category = self.read_nodes()
         f_drug = open('drug.txt', 'w+')
